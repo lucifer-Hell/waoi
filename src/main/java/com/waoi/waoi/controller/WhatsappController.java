@@ -13,7 +13,7 @@ public class WhatsappController {
     EventHandleService eventHandleService;
 
     @PostMapping("/glitchRequest")
-    public String handleGlitchRequests(RequestEntity requestEntity){
+    public String handleGlitchRequests(RequestEntity requestEntity) throws Exception {
         return eventHandleService.handleEvent(
                 "7089212082",
                 "welcome to hell"

@@ -18,8 +18,8 @@ public class Event {
     @Indexed
     String evtId;
     String message;
-    List<String> nextEvt;
+    String nextEvt;
     EventType evtType;
     InputType inputType;
-    List<HashMap<String,String>> options;
+    HashMap<String,String> options;
 }
