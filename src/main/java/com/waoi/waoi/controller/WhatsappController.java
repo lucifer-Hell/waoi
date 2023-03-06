@@ -1,6 +1,6 @@
 package com.waoi.waoi.controller;
 
-import com.waoi.waoi.model.UserState;
+import com.waoi.waoi.dto.TestPayLoadDTO;
 import com.waoi.waoi.service.EventHandleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.RequestEntity;
@@ -13,10 +13,11 @@ public class WhatsappController {
     EventHandleService eventHandleService;
 
     @PostMapping("/glitchRequest")
-    public String handleGlitchRequests(RequestEntity requestEntity) throws Exception {
+    public String handleGlitchRequests(@RequestBody TestPayLoadDTO testPayLoadDTO) throws Exception {
+        System.out.println(testPayLoadDTO);
         return eventHandleService.handleEvent(
-                "7089212082",
-                "welcome to hell"
+                testPayLoadDTO.getMobileNumber(),
+                testPayLoadDTO.getInput()
         );
     }
     @PostMapping("/webhook")

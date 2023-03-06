@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface EventRepository extends MongoRepository<Event,String> {
-    Event findByEvtId(String eventId);
+    Event findByEvtId(String evtId);
 }

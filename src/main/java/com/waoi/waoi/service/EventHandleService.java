@@ -1,5 +1,6 @@
 package com.waoi.waoi.service;
 
+import com.waoi.waoi.dto.OptionDTO;
 import com.waoi.waoi.enums.EventType;
 import com.waoi.waoi.enums.InputType;
 import com.waoi.waoi.model.Event;
@@ -28,7 +29,7 @@ public class EventHandleService {
             userState.setCurrEvtId("0");
             userState.setData(new HashMap<>());
             userStateRepository.save(userState);
-            response=eventRepository.findByEvtId(userState.getCurrEvtId()).getMessage();
+            response=getEvtMessage(userState.getCurrEvtId());
         }
         else{
             // set user state
@@ -38,18 +39,28 @@ public class EventHandleService {
                 // if input type is options
                 if(event.getInputType().equals(InputType.OPTIONS)){
                     // compare with option and chose next event accordingly
-                    if(event.getOptions().containsKey(input)){
-                        userState.setPrevEvtId(userState.getCurrEvtId());
-                        userState.setCurrEvtId(event.getOptions().get(input));
-                    }else{
-                        throw new Exception("Unknow option");
+                    boolean noOptionFound=true;
+                    for(OptionDTO option :event.getOptions()) {
+                        if (option.getOptionId().equals(input)) {
+                            userState.setPrevEvtId(userState.getCurrEvtId());
+                            userState.setCurrEvtId(option.getEventId());
+                            userStateRepository.save(userState);
+                            noOptionFound=false;
+                            break;
+                        }
                     }
+                    if(noOptionFound)
+                        throw new Exception("Unknown option");
+                    else
+                        response= getEvtMessage(userState.getCurrEvtId());
                 }
                 else if(event.getInputType().equals(InputType.DATA)){
                     // set the answer
                     userState.getData().put(event.getEvtId(),input);
                     userState.setPrevEvtId(userState.getCurrEvtId());
                     userState.setCurrEvtId(event.getNextEvt());
+                    userStateRepository.save(userState);
+                    return handleEvent(mobileNumber,input);
                 }
                 else{
                     throw new Exception("Invalid Input type ");
@@ -71,5 +82,9 @@ public class EventHandleService {
             }
         }
         return response;
+    }
+
+    private String getEvtMessage(String evtId) {
+        return eventRepository.findByEvtId(evtId).getMessage();
     }
 }
